@@ -74,7 +74,7 @@ async function saveReport(query: string, result: AnalysisResult) {
     threats: result.threats,
     sentiment: result.sentiment,
     score: result.scores.overall,
-    payload: result as unknown as Record<string, unknown>,
+    payload: result as any,
   });
   if (error) console.error("[supabase] saveReport", error);
 }
