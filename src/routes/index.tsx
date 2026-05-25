@@ -28,6 +28,9 @@ export const Route = createFileRoute("/")({
 function DashboardPage() {
   const [data, setData] = useState<AnalysisResult | null>(mockAnalysis);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [source, setSource] = useState<"cache" | "webhook" | "mock" | null>(null);
+  const [reportsRefresh, setReportsRefresh] = useState(0);
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
@@ -35,10 +38,16 @@ function DashboardPage() {
 
   const handleAnalyze = async (q: string) => {
     setLoading(true);
+    setError(null);
     setData(null);
     try {
       const result = await analyzeCompany(q);
-      setData(result);
+      setData(result.data);
+      setSource(result.source);
+      setReportsRefresh((n) => n + 1);
+    } catch (e) {
+      console.error(e);
+      setError(e instanceof Error ? e.message : "Failed to analyze company");
     } finally {
       setLoading(false);
     }
@@ -59,6 +68,20 @@ function DashboardPage() {
 
         <Topbar onAnalyze={handleAnalyze} loading={loading} />
 
+        {source && !loading && (
+          <div className="text-xs text-muted-foreground -mt-2">
+            {source === "cache" && "✓ Loaded from cache"}
+            {source === "webhook" && "✓ Fresh analysis from n8n workflow"}
+            {source === "mock" && "ⓘ n8n unreachable — showing demo data (saved to cache)"}
+          </div>
+        )}
+
+        {error && (
+          <div className="glass rounded-xl p-4 border border-destructive/30 text-sm text-destructive">
+            {error}
+          </div>
+        )}
+
         {loading || !data ? (
           <DashboardSkeleton />
         ) : (
@@ -73,7 +96,7 @@ function DashboardPage() {
               </div>
               <WorkflowPanel data={data} />
             </div>
-            <ReportsTable />
+            <ReportsTable refreshKey={reportsRefresh} />
           </>
         )}
       </main>
