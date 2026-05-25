@@ -16,9 +16,9 @@ import { mockAnalysis, type AnalysisResult } from "@/lib/mock-data";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Kolino Intelligence — AI Market Intelligence Dashboard" },
+      { title: "AI Market Intelligence Dashboard" },
       { name: "description", content: "AI-powered competitive and market intelligence dashboard for startups and enterprises." },
-      { property: "og:title", content: "Kolino Intelligence" },
+      { property: "og:title", content: "AI Market Intelligence" },
       { property: "og:description", content: "AI-powered market intelligence dashboard." },
     ],
   }),
@@ -50,7 +50,7 @@ function DashboardPage() {
       <main className="flex-1 min-w-0 p-4 md:p-6 lg:p-8 space-y-5">
         <header>
           <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
-            <span className="text-gradient">Kolino</span> Intelligence
+            <span className="text-gradient">Market</span> Intelligence
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
             AI-powered market & competitor intelligence in real time

@@ -1,6 +1,6 @@
 import { mockAnalysis, type AnalysisResult } from "./mock-data";
 
-const N8N_WEBHOOK = "http://localhost:5678/webhook/company-analysis";
+const N8N_WEBHOOK = "http://localhost:5678/webhook-test/ai summerizer";
 
 export async function analyzeCompany(query: string): Promise<AnalysisResult> {
   // Try n8n webhook, fall back to mock data
