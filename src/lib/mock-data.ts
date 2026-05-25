@@ -33,6 +33,99 @@ export type AnalysisResult = {
   workflow: { id: string; label: string; status: "done" | "running" | "queued"; progress: number }[];
 };
 
+// Intelligence Overview KPIs
+export const intelligenceKPIs = [
+  {
+    label: "Market Leader",
+    value: "DJI",
+    sub: "58% global UAS share",
+    delta: "-2.1pp YoY",
+    trend: "down" as const,
+  },
+  {
+    label: "AI Autonomy Score",
+    value: "Skydio",
+    sub: "90 / 100 onboard stack",
+    delta: "+6 vs DJI",
+    trend: "up" as const,
+  },
+  {
+    label: "Enterprise Adoption",
+    value: "74%",
+    sub: "DJI Matrice + Dock 2",
+    delta: "+8pp YoY",
+    trend: "up" as const,
+  },
+  {
+    label: "Regulatory Risk",
+    value: "Elevated",
+    sub: "FY25 NDAA · Entity List",
+    delta: "DJI exposed",
+    trend: "down" as const,
+  },
+  {
+    label: "Defense Readiness",
+    value: "Skydio · Anduril",
+    sub: "Blue UAS approved",
+    delta: "+12 contracts",
+    trend: "up" as const,
+  },
+];
+
+// DJI vs Skydio head-to-head
+export const headToHead = {
+  left: { name: "DJI", domain: "dji.com", tag: "Incumbent · Shenzhen" },
+  right: { name: "Skydio", domain: "skydio.com", tag: "Challenger · Redwood City" },
+  rows: [
+    { label: "Global market share", left: "58%", right: "7%", leftBar: 58, rightBar: 7, unit: "%" },
+    { label: "Onboard autonomy", left: "GPS + assisted", right: "Full visual AI", leftBar: 68, rightBar: 90 },
+    { label: "Enterprise presence", left: "30k+ fleets", right: "3.2k fleets", leftBar: 82, rightBar: 56 },
+    { label: "US defense contracts", left: "Restricted", right: "$74M+ awarded", leftBar: 18, rightBar: 88 },
+    { label: "Pricing tier", left: "$500–$15k", right: "$11k–$25k", leftBar: 45, rightBar: 75 },
+    { label: "Manufacturing scale", left: "Vertically integrated", right: "Contract assembly", leftBar: 95, rightBar: 48 },
+    { label: "Regulatory risk", left: "High (NDAA, Entity List)", right: "Low (Blue UAS)", leftBar: 78, rightBar: 18 },
+  ],
+};
+
+// Market Opportunity verticals
+export const opportunities = [
+  {
+    title: "Infrastructure Inspection",
+    tam: "$8.4B",
+    cagr: "+19%",
+    desc: "Power, rail, pipelines and telecom towers shifting from manual to drone-in-a-box.",
+    leaders: ["DJI Matrice", "Skydio X10", "Percepto"],
+  },
+  {
+    title: "Defense ISR",
+    tam: "$12.1B",
+    cagr: "+27%",
+    desc: "Short-range reconnaissance, loitering munitions and squad-level autonomy post-Ukraine.",
+    leaders: ["Anduril", "Skydio", "Shield AI"],
+  },
+  {
+    title: "Precision Agriculture",
+    tam: "$6.2B",
+    cagr: "+14%",
+    desc: "Spraying, mapping and crop scouting; DJI Agras dominates APAC and LATAM.",
+    leaders: ["DJI Agras", "XAG", "Parrot"],
+  },
+  {
+    title: "Emergency Response",
+    tam: "$2.8B",
+    cagr: "+22%",
+    desc: "Drone-as-first-responder (DFR) programs across US public safety agencies.",
+    leaders: ["Skydio", "BRINC", "Axon Air"],
+  },
+  {
+    title: "Logistics & Delivery",
+    tam: "$4.6B",
+    cagr: "+31%",
+    desc: "Middle-mile and last-mile delivery; gated on FAA Part 108 BVLOS rulemaking.",
+    leaders: ["Zipline", "Wing", "Matternet"],
+  },
+];
+
 // Primary benchmark: DJI (incumbent) vs Skydio (US autonomy challenger)
 export const mockAnalysis: AnalysisResult = {
   summary:
@@ -74,6 +167,7 @@ export const mockAnalysis: AnalysisResult = {
       "Onboard AI autonomy replacing GPS-only navigation as table stakes",
       "FAA Part 108 BVLOS framework expanding enterprise TAM in 2025–26",
       "Drone-in-a-box (autonomous docking) deployments scaling in utilities",
+      "Edge AI inference moving from companion compute to embedded SoCs",
     ],
     growth: [
       "Infrastructure & utility inspection (power, rail, pipelines)",
@@ -91,10 +185,10 @@ export const mockAnalysis: AnalysisResult = {
   },
   radar: [
     { metric: "AI Autonomy", value: 68, benchmark: 90 },
-    { metric: "Hardware Ecosystem", value: 95, benchmark: 70 },
-    { metric: "Defense Adoption", value: 35, benchmark: 88 },
-    { metric: "Enterprise Penetration", value: 74, benchmark: 82 },
-    { metric: "Developer Ecosystem", value: 70, benchmark: 78 },
+    { metric: "Hardware", value: 95, benchmark: 70 },
+    { metric: "Defense", value: 35, benchmark: 88 },
+    { metric: "Enterprise", value: 74, benchmark: 82 },
+    { metric: "Developer", value: 70, benchmark: 78 },
     { metric: "Global Reach", value: 96, benchmark: 55 },
   ],
   trend: [
@@ -107,7 +201,7 @@ export const mockAnalysis: AnalysisResult = {
     { month: "Jul", mentions: 5800, sentiment: 59 },
   ],
   sentiment: [
-    { platform: "Reddit r/drones", positive: 54, neutral: 31, negative: 15 },
+    { platform: "Reddit", positive: 54, neutral: 31, negative: 15 },
     { platform: "X / Twitter", positive: 48, neutral: 34, negative: 18 },
     { platform: "LinkedIn", positive: 66, neutral: 27, negative: 7 },
     { platform: "Defense News", positive: 39, neutral: 38, negative: 23 },
@@ -144,7 +238,6 @@ export const mockAnalysis: AnalysisResult = {
   ],
 };
 
-// Realistic comparison set — autonomous drone landscape
 export const recentReports = [
   { company: "DJI", score: 84, date: "2026-05-24", status: "Complete" },
   { company: "Skydio", score: 79, date: "2026-05-24", status: "Complete" },
@@ -154,4 +247,4 @@ export const recentReports = [
   { company: "Teal Drones (Red Cat)", score: 64, date: "2026-05-20", status: "Processing" },
 ];
 
-export const recentSearches = ["DJI", "Skydio", "Anduril", "Autel Robotics", "Parrot"];
+export const recentSearches = ["DJI", "Skydio", "Anduril", "Autel Robotics", "Shield AI"];

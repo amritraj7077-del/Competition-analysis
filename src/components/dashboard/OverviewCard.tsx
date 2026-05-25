@@ -1,68 +1,56 @@
-import { motion } from "framer-motion";
 import type { AnalysisResult } from "@/lib/mock-data";
-import { Globe, TrendingUp } from "lucide-react";
-
-function ScoreRing({ label, value, color }: { label: string; value: number; color: string }) {
-  const circumference = 2 * Math.PI * 28;
-  const offset = circumference - (value / 100) * circumference;
-  return (
-    <div className="flex flex-col items-center gap-1.5">
-      <div className="relative w-20 h-20">
-        <svg className="w-20 h-20 -rotate-90" viewBox="0 0 64 64">
-          <circle cx="32" cy="32" r="28" stroke="oklch(1 0 0 / 0.06)" strokeWidth="5" fill="none" />
-          <motion.circle
-            cx="32"
-            cy="32"
-            r="28"
-            stroke={color}
-            strokeWidth="5"
-            strokeLinecap="round"
-            fill="none"
-            initial={{ strokeDashoffset: circumference }}
-            animate={{ strokeDashoffset: offset }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-            style={{ strokeDasharray: circumference, filter: `drop-shadow(0 0 6px ${color})` }}
-          />
-        </svg>
-        <div className="absolute inset-0 flex items-center justify-center text-lg font-semibold">{value}</div>
-      </div>
-      <span className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</span>
-    </div>
-  );
-}
+import { Globe, ArrowUpRight } from "lucide-react";
+import { SectionHeader } from "./IntelligenceOverview";
 
 export function OverviewCard({ data }: { data: AnalysisResult }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="glass rounded-2xl p-6 relative overflow-hidden"
-    >
-      <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-primary/20 blur-3xl pointer-events-none" />
-      <div className="relative flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-aurora flex items-center justify-center text-2xl font-bold text-white shadow-neon animate-pulse-glow">
-            {data.company.logo}
-          </div>
-          <div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Globe className="w-3 h-3" /> {data.company.domain} · {data.company.industry}
-            </div>
-            <h2 className="text-2xl font-semibold mt-1">{data.company.name}</h2>
-            <p className="text-sm text-muted-foreground mt-1.5 max-w-xl flex items-start gap-1.5">
-              <TrendingUp className="w-3.5 h-3.5 mt-0.5 text-success shrink-0" />
-              {data.summary}
-            </p>
-          </div>
-        </div>
+  const scores = [
+    { label: "Overall", value: data.scores.overall },
+    { label: "Innovation", value: data.scores.innovation },
+    { label: "Market", value: data.scores.market },
+    { label: "AI Maturity", value: data.scores.aiMaturity },
+  ];
 
-        <div className="flex gap-5 flex-wrap">
-          <ScoreRing label="Overall" value={data.scores.overall} color="oklch(0.65 0.27 300)" />
-          <ScoreRing label="Innovation" value={data.scores.innovation} color="oklch(0.65 0.22 255)" />
-          <ScoreRing label="Market" value={data.scores.market} color="oklch(0.82 0.16 200)" />
-          <ScoreRing label="AI Maturity" value={data.scores.aiMaturity} color="oklch(0.72 0.25 340)" />
+  return (
+    <section>
+      <SectionHeader
+        eyebrow="00 · Subject"
+        title="Company brief"
+        sub="Aggregated from filings, news, hiring data and social signals"
+        action={
+          <button className="hidden md:inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition">
+            Open full report <ArrowUpRight className="w-3 h-3" />
+          </button>
+        }
+      />
+      <div className="panel rounded-lg p-5">
+        <div className="flex flex-col lg:flex-row gap-5 items-start lg:items-center justify-between">
+          <div className="flex items-start gap-3.5">
+            <div className="w-10 h-10 rounded-md border border-border bg-white/[0.04] flex items-center justify-center text-base font-semibold">
+              {data.company.logo}
+            </div>
+            <div>
+              <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                <Globe className="w-2.5 h-2.5" /> {data.company.domain}
+                <span className="w-px h-2.5 bg-border" />
+                {data.company.industry}
+              </div>
+              <h3 className="text-lg font-semibold mt-0.5 tracking-tight">{data.company.name}</h3>
+              <p className="text-[12.5px] text-muted-foreground mt-1.5 max-w-2xl leading-relaxed">
+                {data.summary}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-4 gap-px bg-border border border-border rounded-md overflow-hidden w-full lg:w-auto">
+            {scores.map((s) => (
+              <div key={s.label} className="bg-background px-4 py-2.5 min-w-[80px]">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{s.label}</div>
+                <div className="text-base font-semibold tabular-nums mt-0.5">{s.value}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </motion.div>
+    </section>
   );
 }
