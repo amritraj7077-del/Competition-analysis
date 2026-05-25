@@ -22,7 +22,7 @@ export function Sidebar({ active = "dashboard" }: { active?: string }) {
           </div>
         </div>
         <div className="leading-tight">
-          <div className="font-semibold text-sm">Kolino</div>
+          <div className="font-semibold text-sm">AI Summarizer</div>
           <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Intelligence</div>
         </div>
       </div>
