@@ -1,36 +1,40 @@
 import { supabase } from "@/integrations/supabase/client";
-import { mockAnalysis, type AnalysisResult } from "./mock-data";
 
 const N8N_WEBHOOK = "http://localhost:5678/webhook-test/ai summerizer";
 
 const normalizeKey = (s: string) => s.trim().toLowerCase().replace(/\s+/g, "-");
 
-function reportRowToResult(row: any, fallback: AnalysisResult): AnalysisResult {
-  const payload = (row.payload ?? {}) as Partial<AnalysisResult>;
+type AnalysisPayload = {
+  company: { name: string; domain: string };
+  summary: string;
+  strengths: string[];
+  weaknesses: string[];
+  opportunities: string[];
+  threats: string[];
+  scores: { overall: number };
+  sentiment?: { platform: string; positive: number; neutral: number; negative: number }[];
+};
+
+function reportRowToPayload(row: any): AnalysisPayload {
+  const payload = (row.payload ?? {}) as Partial<AnalysisPayload>;
   return {
-    ...fallback,
-    ...payload,
     company: {
-      ...fallback.company,
-      ...(payload.company ?? {}),
-      name: row.company,
-      domain: row.website ?? payload.company?.domain ?? fallback.company.domain,
+      name: row.company ?? "Unknown",
+      domain: row.website ?? payload.company?.domain ?? "",
     },
-    summary: row.summary ?? payload.summary ?? fallback.summary,
-    strengths: (row.strengths as string[]) ?? fallback.strengths,
-    weaknesses: (row.weaknesses as string[]) ?? fallback.weaknesses,
-    opportunities: (row.opportunities as string[]) ?? fallback.opportunities,
-    threats: (row.threats as string[]) ?? fallback.threats,
-    sentiment: (row.sentiment as AnalysisResult["sentiment"]) ?? fallback.sentiment,
+    summary: row.summary ?? payload.summary ?? "No summary available.",
+    strengths: (row.strengths as string[]) ?? payload.strengths ?? [],
+    weaknesses: (row.weaknesses as string[]) ?? payload.weaknesses ?? [],
+    opportunities: (row.opportunities as string[]) ?? payload.opportunities ?? [],
+    threats: (row.threats as string[]) ?? payload.threats ?? [],
     scores: {
-      ...fallback.scores,
-      ...(payload.scores ?? {}),
-      overall: row.score ?? payload.scores?.overall ?? fallback.scores.overall,
+      overall: row.score ?? payload.scores?.overall ?? 0,
     },
+    sentiment: row.sentiment ?? payload.sentiment,
   };
 }
 
-export async function findCachedReport(query: string): Promise<AnalysisResult | null> {
+export async function findCachedReport(query: string): Promise<AnalysisPayload | null> {
   const key = normalizeKey(query);
   const { data, error } = await supabase
     .from("company_reports")
@@ -43,10 +47,10 @@ export async function findCachedReport(query: string): Promise<AnalysisResult | 
     return null;
   }
   if (!data) return null;
-  return reportRowToResult(data, mockAnalysis);
+  return reportRowToPayload(data);
 }
 
-async function callWebhook(query: string): Promise<Partial<AnalysisResult> | null> {
+async function callWebhook(query: string): Promise<Partial<AnalysisPayload> | null> {
   try {
     const res = await fetch(N8N_WEBHOOK, {
       method: "POST",
@@ -55,14 +59,14 @@ async function callWebhook(query: string): Promise<Partial<AnalysisResult> | nul
       signal: AbortSignal.timeout(15000),
     });
     if (!res.ok) throw new Error(`webhook ${res.status}`);
-    return (await res.json()) as Partial<AnalysisResult>;
+    return (await res.json()) as Partial<AnalysisPayload>;
   } catch (err) {
-    console.warn("[n8n] webhook unreachable, using mock data", err);
+    console.warn("[n8n] webhook unreachable", err);
     return null;
   }
 }
 
-async function saveReport(query: string, result: AnalysisResult) {
+async function saveReport(query: string, result: AnalysisPayload) {
   const { error } = await supabase.from("company_reports").insert({
     company: result.company.name,
     company_key: normalizeKey(query),
@@ -80,31 +84,46 @@ async function saveReport(query: string, result: AnalysisResult) {
 }
 
 export async function analyzeCompany(query: string): Promise<{
-  data: AnalysisResult;
   source: "cache" | "webhook" | "mock";
 }> {
   // 1. Check cache
   const cached = await findCachedReport(query);
-  if (cached) return { data: cached, source: "cache" };
+  if (cached) return { source: "cache" };
 
   // 2. Call n8n webhook
   const webhookData = await callWebhook(query);
 
-  // 3. Build result (merge webhook over mock skeleton so charts always render)
-  const result: AnalysisResult = {
-    ...mockAnalysis,
-    ...(webhookData ?? {}),
-    company: {
-      ...mockAnalysis.company,
-      name: query.charAt(0).toUpperCase() + query.slice(1),
-      ...(webhookData?.company ?? {}),
-    },
+  if (webhookData) {
+    // 3. Build and save result
+    const result: AnalysisPayload = {
+      company: {
+        name: query.charAt(0).toUpperCase() + query.slice(1),
+        domain: webhookData.company?.domain ?? "",
+      },
+      summary: webhookData.summary ?? "Analysis complete.",
+      strengths: webhookData.strengths ?? [],
+      weaknesses: webhookData.weaknesses ?? [],
+      opportunities: webhookData.opportunities ?? [],
+      threats: webhookData.threats ?? [],
+      scores: { overall: webhookData.scores?.overall ?? 0 },
+      sentiment: webhookData.sentiment,
+    };
+    await saveReport(query, result);
+    return { source: "webhook" };
+  }
+
+  // 3. Mock fallback — just save a stub
+  const result: AnalysisPayload = {
+    company: { name: query.charAt(0).toUpperCase() + query.slice(1), domain: "" },
+    summary: "Demo analysis — workflow offline.",
+    strengths: [],
+    weaknesses: [],
+    opportunities: [],
+    threats: [],
+    scores: { overall: 0 },
   };
-
-  // 4. Save to Supabase
   await saveReport(query, result);
-
-  return { data: result, source: webhookData ? "webhook" : "mock" };
+  return { source: "mock" };
 }
 
 export async function listRecentReports(limit = 8) {
