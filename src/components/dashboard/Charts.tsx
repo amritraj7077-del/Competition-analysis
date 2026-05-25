@@ -1,78 +1,89 @@
-import { motion } from "framer-motion";
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid,
-  BarChart, Bar, Legend,
+  BarChart, Bar,
 } from "recharts";
 import type { AnalysisResult } from "@/lib/mock-data";
+import { SectionHeader } from "./IntelligenceOverview";
 
 const tooltipStyle = {
-  background: "oklch(0.16 0.04 275 / 0.95)",
-  border: "1px solid oklch(1 0 0 / 0.1)",
-  borderRadius: 12,
-  fontSize: 12,
-  backdropFilter: "blur(20px)",
+  background: "oklch(0.1 0.018 275 / 0.96)",
+  border: "1px solid oklch(1 0 0 / 0.08)",
+  borderRadius: 6,
+  fontSize: 11,
+  padding: "6px 10px",
 } as const;
+
+const axisTick = { fill: "oklch(0.6 0.02 270)", fontSize: 10 };
 
 export function ChartsGrid({ data }: { data: AnalysisResult }) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass rounded-2xl p-5">
-        <h4 className="text-sm font-semibold mb-1">Capability Radar</h4>
-        <p className="text-xs text-muted-foreground mb-3">vs industry benchmark</p>
-        <ResponsiveContainer width="100%" height={240}>
-          <RadarChart data={data.radar}>
-            <PolarGrid stroke="oklch(1 0 0 / 0.1)" />
-            <PolarAngleAxis dataKey="metric" tick={{ fill: "oklch(0.68 0.04 270)", fontSize: 11 }} />
-            <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} stroke="transparent" />
-            <Radar name="Company" dataKey="value" stroke="oklch(0.65 0.27 300)" fill="oklch(0.65 0.27 300)" fillOpacity={0.4} />
-            <Radar name="Benchmark" dataKey="benchmark" stroke="oklch(0.65 0.22 255)" fill="oklch(0.65 0.22 255)" fillOpacity={0.15} />
-            <Tooltip contentStyle={tooltipStyle} />
-          </RadarChart>
-        </ResponsiveContainer>
-      </motion.div>
+    <section>
+      <SectionHeader
+        eyebrow="06 · Quantitative signals"
+        title="Capability, momentum and sentiment"
+      />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-border border border-border rounded-lg overflow-hidden">
+        <ChartCard title="Capability vs benchmark" sub="DJI · Skydio">
+          <ResponsiveContainer width="100%" height={220}>
+            <RadarChart data={data.radar} margin={{ top: 8, right: 16, bottom: 8, left: 16 }}>
+              <PolarGrid stroke="oklch(1 0 0 / 0.08)" />
+              <PolarAngleAxis dataKey="metric" tick={axisTick} />
+              <PolarRadiusAxis domain={[0, 100]} tick={false} stroke="transparent" />
+              <Radar name="DJI" dataKey="value" stroke="oklch(0.78 0.1 210)" fill="oklch(0.78 0.1 210)" fillOpacity={0.18} strokeWidth={1.5} />
+              <Radar name="Skydio" dataKey="benchmark" stroke="oklch(0.72 0.14 295)" fill="oklch(0.72 0.14 295)" fillOpacity={0.15} strokeWidth={1.5} />
+              <Tooltip contentStyle={tooltipStyle} />
+            </RadarChart>
+          </ResponsiveContainer>
+        </ChartCard>
 
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="glass rounded-2xl p-5">
-        <h4 className="text-sm font-semibold mb-1">Mentions & Sentiment Trend</h4>
-        <p className="text-xs text-muted-foreground mb-3">Last 7 months</p>
-        <ResponsiveContainer width="100%" height={240}>
-          <AreaChart data={data.trend}>
-            <defs>
-              <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="oklch(0.65 0.27 300)" stopOpacity={0.7} />
-                <stop offset="95%" stopColor="oklch(0.65 0.27 300)" stopOpacity={0} />
-              </linearGradient>
-              <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="oklch(0.82 0.16 200)" stopOpacity={0.7} />
-                <stop offset="95%" stopColor="oklch(0.82 0.16 200)" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid stroke="oklch(1 0 0 / 0.05)" />
-            <XAxis dataKey="month" tick={{ fill: "oklch(0.68 0.04 270)", fontSize: 11 }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fill: "oklch(0.68 0.04 270)", fontSize: 11 }} axisLine={false} tickLine={false} />
-            <Tooltip contentStyle={tooltipStyle} />
-            <Area type="monotone" dataKey="mentions" stroke="oklch(0.65 0.27 300)" fill="url(#g1)" strokeWidth={2} />
-            <Area type="monotone" dataKey="sentiment" stroke="oklch(0.82 0.16 200)" fill="url(#g2)" strokeWidth={2} />
-          </AreaChart>
-        </ResponsiveContainer>
-      </motion.div>
+        <ChartCard title="Mentions & sentiment" sub="Trailing 7 months">
+          <ResponsiveContainer width="100%" height={220}>
+            <AreaChart data={data.trend} margin={{ top: 10, right: 12, bottom: 0, left: -12 }}>
+              <defs>
+                <linearGradient id="gm" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="oklch(0.72 0.14 295)" stopOpacity={0.3} />
+                  <stop offset="100%" stopColor="oklch(0.72 0.14 295)" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid stroke="oklch(1 0 0 / 0.04)" vertical={false} />
+              <XAxis dataKey="month" tick={axisTick} axisLine={false} tickLine={false} />
+              <YAxis tick={axisTick} axisLine={false} tickLine={false} width={40} />
+              <Tooltip contentStyle={tooltipStyle} />
+              <Area type="monotone" dataKey="mentions" stroke="oklch(0.72 0.14 295)" fill="url(#gm)" strokeWidth={1.75} />
+              <Area type="monotone" dataKey="sentiment" stroke="oklch(0.78 0.1 210)" fill="transparent" strokeWidth={1.5} strokeDasharray="3 3" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </ChartCard>
 
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass rounded-2xl p-5">
-        <h4 className="text-sm font-semibold mb-1">Sentiment by Platform</h4>
-        <p className="text-xs text-muted-foreground mb-3">Positive · Neutral · Negative</p>
-        <ResponsiveContainer width="100%" height={240}>
-          <BarChart data={data.sentiment} stackOffset="expand">
-            <CartesianGrid stroke="oklch(1 0 0 / 0.05)" />
-            <XAxis dataKey="platform" tick={{ fill: "oklch(0.68 0.04 270)", fontSize: 11 }} axisLine={false} tickLine={false} />
-            <YAxis tickFormatter={(v) => `${Math.round(v * 100)}%`} tick={{ fill: "oklch(0.68 0.04 270)", fontSize: 11 }} axisLine={false} tickLine={false} />
-            <Tooltip contentStyle={tooltipStyle} />
-            <Legend wrapperStyle={{ fontSize: 11 }} />
-            <Bar dataKey="positive" stackId="a" fill="oklch(0.72 0.18 155)" radius={[0, 0, 0, 0]} />
-            <Bar dataKey="neutral" stackId="a" fill="oklch(0.65 0.22 255)" />
-            <Bar dataKey="negative" stackId="a" fill="oklch(0.65 0.24 25)" radius={[6, 6, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </motion.div>
+        <ChartCard title="Sentiment mix" sub="Positive · Neutral · Negative">
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={data.sentiment} stackOffset="expand" margin={{ top: 10, right: 12, bottom: 0, left: -12 }}>
+              <CartesianGrid stroke="oklch(1 0 0 / 0.04)" vertical={false} />
+              <XAxis dataKey="platform" tick={axisTick} axisLine={false} tickLine={false} />
+              <YAxis tickFormatter={(v) => `${Math.round(v * 100)}%`} tick={axisTick} axisLine={false} tickLine={false} width={40} />
+              <Tooltip contentStyle={tooltipStyle} />
+              <Bar dataKey="positive" stackId="a" fill="oklch(0.7 0.14 155)" />
+              <Bar dataKey="neutral" stackId="a" fill="oklch(0.4 0.02 270)" />
+              <Bar dataKey="negative" stackId="a" fill="oklch(0.62 0.2 25)" />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartCard>
+      </div>
+    </section>
+  );
+}
+
+function ChartCard({ title, sub, children }: { title: string; sub: string; children: React.ReactNode }) {
+  return (
+    <div className="bg-background p-4">
+      <div className="flex items-baseline justify-between mb-3">
+        <div>
+          <div className="text-[12px] font-medium">{title}</div>
+          <div className="text-[10px] text-muted-foreground">{sub}</div>
+        </div>
+      </div>
+      {children}
     </div>
   );
 }
