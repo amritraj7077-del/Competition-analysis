@@ -120,9 +120,9 @@ export function ChartsGrid() {
               />
               <Tooltip
                 contentStyle={tooltipStyle}
-                formatter={(v: number, name: string) => [
-                  `${formatMentions(v)} mentions`,
-                  name === "djiMentions" ? "DJI" : "Skydio",
+                formatter={(v, name) => [
+                  `${formatMentions(Number(v))} mentions`,
+                  String(name) === "djiMentions" ? "DJI" : "Skydio",
                 ]}
               />
               <Area
