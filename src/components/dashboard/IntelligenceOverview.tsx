@@ -20,32 +20,30 @@ export function IntelligenceOverview() {
           return (
             <div
               key={k.id}
-              className={`p-4 bg-card/30 hover:bg-card/50 transition-colors${borderClasses}`}
+              className={`p-4 bg-card hover:bg-white/[0.015] transition-colors${borderClasses}`}
             >
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
-                {k.label}
+              <div className="flex items-center justify-between">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+                  {k.label}
+                </div>
+                <div
+                  className={`font-mono-data text-[10px] font-medium ${
+                    k.trend === "up"
+                      ? "text-success"
+                      : k.trend === "down"
+                        ? "text-warning"
+                        : "text-muted-foreground"
+                  }`}
+                >
+                  {k.trend === "up" ? "+" : k.trend === "down" ? "" : "·"}
+                  {k.delta}
+                </div>
               </div>
-              <div className="mt-2 text-[16px] font-semibold tracking-tight text-foreground leading-tight">
+              <div className="mt-2 text-[18px] font-semibold font-mono-data tracking-tighter text-foreground leading-tight">
                 {k.value}
               </div>
-              <div className="text-[11px] text-muted-foreground mt-1 leading-snug">{k.subtext}</div>
-              <div
-                className={`mt-2.5 inline-flex items-center gap-0.5 text-[11px] font-medium ${
-                  k.trend === "up"
-                    ? "text-success"
-                    : k.trend === "down"
-                      ? "text-warning"
-                      : "text-muted-foreground"
-                }`}
-              >
-                {k.trend === "up" ? (
-                  <ArrowUpRight className="w-3 h-3" />
-                ) : k.trend === "down" ? (
-                  <ArrowDownRight className="w-3 h-3" />
-                ) : (
-                  <Minus className="w-3 h-3" />
-                )}
-                {k.delta}
+              <div className="text-[10px] uppercase tracking-tighter text-muted-foreground mt-1.5 leading-snug">
+                {k.subtext}
               </div>
             </div>
           );
