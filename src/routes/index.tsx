@@ -120,19 +120,12 @@ function DashboardPage() {
           ) : (
             <>
               <OverviewCard />
-              <div className="divider-h" />
               <IntelligenceOverview />
-              <div className="divider-h" />
               <CompanyComparison />
-              <div className="divider-h" />
               <SwotSection />
-              <div className="divider-h" />
               <MarketInsights />
-              <div className="divider-h" />
               <Opportunities />
-              <div className="divider-h" />
               <ChartsGrid />
-              <div className="divider-h" />
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
                 <div className="lg:col-span-2">
                   <SocialPanel />
@@ -141,16 +134,18 @@ function DashboardPage() {
                   <WorkflowPanel />
                 </div>
               </div>
-              <div className="divider-h" />
               <ReportsTable refreshKey={reportsRefresh} />
 
-              <footer className="pt-6 pb-4 text-[10.5px] text-muted-foreground flex items-center justify-between border-t border-border flex-wrap gap-2">
-                <span>
-                  © 2026 UAS Intelligence Platform · Sources: SEC EDGAR, FAA, DoD DPCAP, Defense
-                  News, Crunchbase, LinkedIn, Reddit, X/Twitter
-                </span>
-                <span className="text-muted-foreground/60">
-                  Built with TanStack Start · Recharts · Supabase
+              <footer className="mt-4 pt-3 border-t border-border flex items-center justify-between flex-wrap gap-2">
+                <div className="flex gap-3 flex-wrap">
+                  {["SEC EDGAR", "FAA", "DoD DPCAP", "Crunchbase", "LinkedIn", "X/Twitter"].map((s) => (
+                    <span key={s} className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+                      {s}
+                    </span>
+                  ))}
+                </div>
+                <span className="text-[9px] font-mono-data text-muted-foreground/60 uppercase">
+                  v1.2.4·pro · build 7f3a · © 2026 UAS Intelligence
                 </span>
               </footer>
             </>
