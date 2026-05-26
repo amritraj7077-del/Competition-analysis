@@ -61,34 +61,45 @@ export function OverviewCard() {
       <div className="panel rounded-lg border border-border overflow-hidden">
         {/* Company cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 divide-x-0 lg:divide-x divide-border">
-          {companyBriefs.map((c) => (
-            <div key={c.id} className="p-5">
-              <div className="flex items-start gap-3.5">
-                <div className="w-10 h-10 rounded-md border border-border bg-white/[0.05] flex items-center justify-center text-[16px] font-bold text-foreground shrink-0">
+          {companyBriefs.map((c, idx) => (
+            <div key={c.id} className="p-5 relative">
+              <span
+                className="absolute top-0 left-0 w-0.5 h-full"
+                style={{
+                  background: idx === 0 ? "oklch(0.55 0 0)" : "var(--neon-cyan)",
+                }}
+              />
+              <div className="flex items-start gap-3.5 pl-2">
+                <div className="w-10 h-10 border border-border bg-card flex items-center justify-center text-[16px] font-bold text-foreground shrink-0">
                   {c.logo}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center flex-wrap gap-2 text-[11px] text-muted-foreground">
+                  <div className="flex items-center flex-wrap gap-2 text-[10.5px] text-muted-foreground uppercase tracking-wider">
                     <Globe className="w-2.5 h-2.5" />
                     <span>{c.domain}</span>
                     <span className="w-px h-2.5 bg-border" />
                     <span>{c.hq}</span>
                     <span className="w-px h-2.5 bg-border" />
-                    <span>{c.stage}</span>
+                    <span className="font-mono-data normal-case tracking-normal text-foreground/80">{c.stage}</span>
                   </div>
-                  <h3 className="text-[17px] font-semibold mt-1 tracking-tight text-foreground">
+                  <h3 className="text-[17px] font-semibold mt-1.5 tracking-tight text-foreground">
                     {c.name}
                     <span className="text-[11px] text-muted-foreground font-normal ml-2">{c.industry}</span>
                   </h3>
-                  <p className="text-[12.5px] text-muted-foreground mt-2 leading-relaxed">{c.summary}</p>
+                  <p className="text-[12px] text-muted-foreground mt-2 leading-relaxed border-l border-border pl-3 ml-0">
+                    {c.summary}
+                  </p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-4 gap-px bg-border border border-border rounded-md overflow-hidden mt-4">
+              <div className="grid grid-cols-4 gap-px bg-border border border-border mt-4">
                 {c.scores.map((s) => (
                   <div key={s.label} className="bg-background px-3 py-2.5">
-                    <div className="text-[9.5px] uppercase tracking-wider text-muted-foreground">{s.label}</div>
-                    <div className="text-[17px] font-bold tabular-nums mt-0.5 text-foreground">{s.value}</div>
+                    <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-bold">{s.label}</div>
+                    <div className="text-[17px] font-semibold font-mono-data tabular-nums mt-0.5 text-foreground tracking-tighter">
+                      {s.value}
+                      <span className="text-[10px] text-muted-foreground font-normal">/100</span>
+                    </div>
                   </div>
                 ))}
               </div>

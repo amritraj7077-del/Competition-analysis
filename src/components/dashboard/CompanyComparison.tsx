@@ -79,19 +79,26 @@ export function CompanyComparison() {
 }
 
 function CompanyHeader({ company, side }: { company: CompanyProfile; side: "left" | "right" }) {
+  const accent = side === "left" ? "oklch(0.55 0 0)" : "var(--neon-cyan)";
   return (
-    <div className={`p-4 ${side === "right" ? "border-l border-border" : ""}`}>
-      <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-md bg-white/[0.05] border border-border flex items-center justify-center text-[14px] font-bold text-foreground">
-          {company.name[0]}
+    <div className={`p-4 relative ${side === "right" ? "border-l border-border" : ""}`}>
+      <span className="absolute top-0 left-0 w-0.5 h-full" style={{ background: accent }} />
+      <div className="flex items-center justify-between pl-2">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-card border border-border flex items-center justify-center text-[14px] font-bold text-foreground">
+            {company.name[0]}
+          </div>
+          <div>
+            <div className="text-[13px] font-semibold text-foreground">{company.name}</div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{company.hq} · {company.stage}</div>
+          </div>
         </div>
-        <div>
-          <div className="text-[13px] font-semibold text-foreground">{company.name}</div>
-          <div className="text-[11px] text-muted-foreground">{company.hq} · {company.stage}</div>
+        <div className="text-right">
+          <div className="text-[9px] uppercase tracking-widest text-muted-foreground font-bold">Founded</div>
+          <div className="text-[12px] font-mono-data text-foreground/90">{company.founded}</div>
         </div>
       </div>
-      <div className="mt-2.5 grid grid-cols-3 gap-2">
-        <Chip label="Founded" value={String(company.founded)} />
+      <div className="mt-2.5 grid grid-cols-2 gap-2 pl-2">
         <Chip label="Staff" value={company.employees} />
         <Chip label="Domain" value={company.domain} />
       </div>
@@ -101,9 +108,9 @@ function CompanyHeader({ company, side }: { company: CompanyProfile; side: "left
 
 function Chip({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-white/[0.03] rounded px-2 py-1 border border-border">
-      <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className="text-[11px] font-medium text-foreground/90 truncate mt-0.5">{value}</div>
+    <div className="bg-card px-2 py-1 border border-border">
+      <div className="text-[9px] uppercase tracking-widest text-muted-foreground font-bold">{label}</div>
+      <div className="text-[11px] font-mono-data text-foreground/90 truncate mt-0.5">{value}</div>
     </div>
   );
 }
