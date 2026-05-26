@@ -172,9 +172,9 @@ export function ChartsGrid() {
               />
               <Tooltip
                 contentStyle={tooltipStyle}
-                formatter={(v: number, name: string) => [
-                  `${Math.round(v * 100)}%`,
-                  name.charAt(0).toUpperCase() + name.slice(1),
+                formatter={(v, name) => [
+                  `${Math.round(Number(v) * 100)}%`,
+                  String(name).charAt(0).toUpperCase() + String(name).slice(1),
                 ]}
               />
               <Bar dataKey="positive" stackId="a" fill="oklch(0.7 0.14 155)" />
