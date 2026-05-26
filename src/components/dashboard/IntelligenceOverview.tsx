@@ -1,4 +1,4 @@
-import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
+
 import { marketKPIs } from "@/lib/intelligence-data";
 import { SectionHeader } from "./SectionHeader";
 
