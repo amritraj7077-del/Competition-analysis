@@ -9,6 +9,7 @@ An AI-powered **Competitive Intelligence & Market Research Platform** built with
 ## 📸 Workflow
 
 
+<img width="1920" height="969" alt="Screenshot_2026-05-26_at_6 08 01_PM-2" src="https://github.com/user-attachments/assets/50525c7f-5d3a-4087-a110-81cc810a5212" />
 
 ---
 
